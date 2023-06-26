@@ -1,0 +1,122 @@
+#define BLYNK_TEMPLATE_ID "TMPL3l-OLswyJ"
+#define BLYNK_TEMPLATE_NAME "Forest Monitoring"
+#define BLYNK_AUTH_TOKEN "UxL86lkCF5Gr7RQZKTqQxT_4y2XRsPEK"
+
+#define BLYNK_PRINT Serial
+
+
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
+
+char ssid[] = "Wingardium leviosa";
+char pass[] = "varsha123";
+
+#define fire 12
+#define metal1 25
+#define metal2 27
+
+#define buzzer 5
+#define x 39
+#define y 36
+int xaxis;
+int yaxis;
+
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup()
+{
+  Serial.begin(115200);
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass, "blynk.cloud", 80);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(5,0);
+  lcd.print("FOREST");
+  lcd.setCursor(3,1);
+  lcd.print("MONITORING");
+  delay(4000); 
+
+  pinMode(fire, INPUT);
+  pinMode(metal1, INPUT);
+  pinMode(metal2, INPUT);
+  pinMode(x, INPUT);
+  pinMode(y, INPUT);
+
+  pinMode(buzzer, OUTPUT);
+}
+
+void loop()
+{ 
+  Blynk.run(); 
+  adxl();
+  if(digitalRead(fire) == 0)
+  {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Fire Detected");    
+    digitalWrite(buzzer, HIGH);
+    delay(1000);
+    digitalWrite(buzzer, LOW);
+    delay(2000);
+    lcd.clear();
+    Blynk.virtualWrite(V0,"Fire Detected"); 
+    Blynk.virtualWrite(V0,"\n");
+  }
+  else if(digitalRead(metal1) == 1)
+  {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Sandaltree about");
+    lcd.setCursor(0,1);
+    lcd.print("to cut...");         
+    digitalWrite(buzzer, HIGH);
+    delay(1000);
+    digitalWrite(buzzer, LOW);
+    delay(2000);
+    lcd.clear();
+    Blynk.virtualWrite(V0,"Sandal Tree about to cut"); 
+    Blynk.virtualWrite(V0,"\n");       
+  }
+  else if(digitalRead(metal2) == 1)
+  {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Rosewood about");
+    lcd.setCursor(0,1);
+    lcd.print("to cut...");         
+    digitalWrite(buzzer, HIGH);
+    delay(1000);
+    digitalWrite(buzzer, LOW);
+    delay(2000);
+    lcd.clear();
+    Blynk.virtualWrite(V0,"Rosewood about to cut"); 
+    Blynk.virtualWrite(V0,"\n");       
+  }  
+}
+
+
+void adxl()
+{
+  xaxis = analogRead(x);
+  yaxis = analogRead(y);
+  Serial.println(xaxis);
+  Serial.println(yaxis);
+  delay(1000);
+  if((xaxis<1600)||(xaxis>2000)||(yaxis<1500)||(yaxis>2000))
+  {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Tree Fallen");       
+    digitalWrite(buzzer, HIGH);
+    delay(1000);
+    digitalWrite(buzzer, LOW);
+    delay(2000);
+    lcd.clear();
+    Blynk.virtualWrite(V0,"Tree has fallen down"); 
+    Blynk.virtualWrite(V0,"\n");
+    lcd.clear();    
+  }
+}
