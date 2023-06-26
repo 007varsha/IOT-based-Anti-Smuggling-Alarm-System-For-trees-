@@ -9,8 +9,8 @@
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
 
-char ssid[] = "Wingardium leviosa";
-char pass[] = "varsha123";
+char ssid[] = "user-name";
+char pass[] = "password";
 
 #define fire 12
 #define metal1 25
